@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SandxCDD | Ultra Stream 8K</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #eee; }
+        .video-shadow { box-shadow: 0 0 50px rgba(0, 119, 255, 0.2); }
+        .status-dot { height: 10px; width: 10px; background-color: #00ff00; border-radius: 50%; display: inline-block; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold tracking-tighter text-blue-500">SANDX <span class="text-white">STREAMING</span></h1>
+        <p class="text-gray-400 text-sm"><span class="status-dot mr-2"></span> Servidor 8K Online | CDN Ativa</p>
+    </div>
+
+    <div class="relative w-full max-w-5xl bg-black rounded-xl overflow-hidden video-shadow border border-gray-800">
+        <video id="video" class="w-full aspect-video" controls autoplay playsinline></video>
+        
+        <div id="loading" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full max-w-5xl">
+        <button onclick="changeChannel('br')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🇧🇷 Brasil</button>
+        <button onclick="changeChannel('sports')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">⚽ Esportes</button>
+        <button onclick="changeChannel('movies')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🎬 Filmes</button>
+        <button onclick="changeChannel('us')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🇺🇸 USA</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const loader = document.getElementById('loading');
+        
+        // Defina aqui o seu domínio configurado na Cloudflare
+        const BASE_URL = "https://seu-dominio-cloudflare.com"; 
+
+        // IDs dos canais que você configurou no Live TV do Emby
+        const channels = {
+            'br': `${BASE_URL}/live/channel_br.m3u8`,
+            'sports': `${BASE_URL}/live/channel_sports.m3u8`,
+            'movies': `${BASE_URL}/live/channel_movies.m3u8`,
+            'us': `${BASE_URL}/live/channel_us.m3u8`
+        };
+
+        let hls = new Hls({
+            debug: false,
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 90, // Mantém buffer maior para 8K
+            xhrSetup: function(xhr) {
+                // O User-Agent que você solicitou para evitar bloqueios das fontes IPTV
+                xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Brave/1.61.101');
+            }
+        });
+
+        function changeChannel(id) {
+            const url = channels[id];
+            if (!url) return;
+
+            loader.classList.remove('hidden');
+            
+            if (Hls.isSupported()) {
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                    loader.classList.add('hidden');
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                    loader.classList.add('hidden');
+                });
+            }
+        }
+
+        // Auto-load via URL (Ex: site.com/?ch=sports)
+        const urlParams = new URLSearchParams(window.location.search);
+        const startChannel = urlParams.get('ch') || 'br';
+        changeChannel(startChannel);
+
+    </script>
+</body>
+</html>
