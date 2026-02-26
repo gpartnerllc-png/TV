@@ -3,90 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultra | Stream 8K</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>ULTRA X | STREAMING</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: #eee; }
-        .video-shadow { box-shadow: 0 0 50px rgba(0, 119, 255, 0.2); }
-        .status-dot { height: 10px; width: 10px; background-color: #00ff00; border-radius: 50%; display: inline-block; }
+        body { background-color: #0a0a0a; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .video-container { box-shadow: 0 20px 50px rgba(0, 119, 255, 0.15); border: 1px solid #1f2937; }
+        .glass-panel { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); }
+        .status-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
+<body class="flex flex-col items-center min-h-screen p-6">
 
-    <div class="mb-8 text-center">
-        <h1 class="text-3xl font-bold tracking-tighter text-blue-500">SANDX <span class="text-white">STREAMING</span></h1>
-        <p class="text-gray-400 text-sm"><span class="status-dot mr-2"></span> Servidor 8K Online | CDN Ativa</p>
-    </div>
+    <header class="w-full max-w-6xl flex justify-between items-center mb-8 glass-panel p-4 rounded-2xl border border-gray-800">
+        <div>
+            <h1 class="text-4xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-300">SANDX</h1>
+            <p class="text-xs tracking-widest text-gray-400 mt-1">NEXUS ENTERTAINMENT ENGINE</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="flex items-center text-sm font-semibold text-green-400">
+                <span class="w-2 h-2 rounded-full bg-green-500 mr-2 status-pulse"></span> Sistema Global Online
+            </span>
+            <div class="h-8 w-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center font-bold">IA</div>
+        </div>
+    </header>
 
-    <div class="relative w-full max-w-5xl bg-black rounded-xl overflow-hidden video-shadow border border-gray-800">
-        <video id="video" class="w-full aspect-video" controls autoplay playsinline></video>
+    <div class="relative w-full max-w-6xl bg-black rounded-2xl overflow-hidden video-container">
+        <video id="video" class="w-full aspect-video" controls autoplay></video>
         
-        <div id="loading" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-90 hidden">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+            <p class="text-blue-400 font-mono text-sm tracking-widest">ESTABELECENDO CONEXÃO SEGURA...</p>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full max-w-5xl">
-        <button onclick="changeChannel('br')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🇧🇷 Brasil</button>
-        <button onclick="changeChannel('sports')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">⚽ Esportes</button>
-        <button onclick="changeChannel('movies')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🎬 Filmes</button>
-        <button onclick="changeChannel('us')" class="bg-gray-900 hover:bg-blue-600 p-4 rounded-lg border border-gray-700 transition">🇺🇸 USA</button>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6 w-full max-w-6xl">
+        <button onclick="loadStream('https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8')" class="glass-panel hover:bg-blue-900 p-4 rounded-xl border border-gray-700 transition font-semibold text-left flex flex-col justify-between h-24">
+            <span class="text-xs text-gray-400">SANDX ORIGINALS</span>
+            <span class="text-lg">🎬 Cinema 4K</span>
+        </button>
+        <button onclick="loadStream('LINK_DA_SUA_AWS_AQUI')" class="glass-panel hover:bg-blue-900 p-4 rounded-xl border border-gray-700 transition font-semibold text-left flex flex-col justify-between h-24">
+            <span class="text-xs text-gray-400">LIVE TV (AWS Proxy)</span>
+            <span class="text-lg">📡 Global News</span>
+        </button>
+        <button onclick="loadStream('LINK_CCTV_AQUI')" class="glass-panel hover:bg-red-900 p-4 rounded-xl border border-gray-700 transition font-semibold text-left flex flex-col justify-between h-24">
+            <span class="text-xs text-red-400">SEGURANÇA HLS</span>
+            <span class="text-lg">📹 Câmeras IP</span>
+        </button>
+        <button class="glass-panel opacity-50 cursor-not-allowed p-4 rounded-xl border border-gray-700 transition font-semibold text-left flex flex-col justify-between h-24">
+            <span class="text-xs text-gray-400">DRM PROTECTED</span>
+            <span class="text-lg">🔒 Warner/Max</span>
+        </button>
+        <button class="glass-panel bg-gradient-to-br from-blue-900 to-black p-4 rounded-xl border border-blue-500 transition font-semibold text-left flex flex-col justify-between h-24">
+            <span class="text-xs text-blue-300">MOTOR DE RECOMENDAÇÃO</span>
+            <span class="text-lg">🤖 AI Discovery</span>
+        </button>
     </div>
 
     <script>
-        const video = document.getElementById('video');
+        const videoElement = document.getElementById('video');
         const loader = document.getElementById('loading');
-        
-        // Defina aqui o seu domínio configurado na Cloudflare
-        const BASE_URL = "https://seu-dominio-cloudflare.com"; 
+        let player;
 
-        // IDs dos canais que você configurou no Live TV do Emby
-        const channels = {
-            'br': `${BASE_URL}/live/channel_br.m3u8`,
-            'sports': `${BASE_URL}/live/channel_sports.m3u8`,
-            'movies': `${BASE_URL}/live/channel_movies.m3u8`,
-            'us': `${BASE_URL}/live/channel_us.m3u8`
-        };
-
-        let hls = new Hls({
-            debug: false,
-            enableWorker: true,
-            lowLatencyMode: true,
-            backBufferLength: 90, // Mantém buffer maior para 8K
-            xhrSetup: function(xhr) {
-                // O User-Agent que você solicitou para evitar bloqueios das fontes IPTV
-                xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Brave/1.61.101');
-            }
-        });
-
-        function changeChannel(id) {
-            const url = channels[id];
-            if (!url) return;
-
-            loader.classList.remove('hidden');
-            
-            if (Hls.isSupported()) {
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                    loader.classList.add('hidden');
+        // Inicializa o Shaka Player (Padrão Google)
+        function initApp() {
+            shaka.polyfill.installAll();
+            if (shaka.Player.isBrowserSupported()) {
+                player = new shaka.Player(videoElement);
+                
+                // Configurações avançadas de CDN e Buffering (Preparação para 8K)
+                player.configure({
+                    streaming: { bufferingGoal: 60, rebufferingGoal: 15, bufferBehind: 30 },
+                    // Aqui entrariam as chaves DRM se você tivesse os servidores de licença
+                    // drm: { servers: { 'com.widevine.alpha': 'https://seu-servidor-licenca.com' } }
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                    loader.classList.add('hidden');
+
+                // Interceptador de Requisições (Para enviar Tokens de Segurança/Cookies)
+                player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+                    // Adiciona cabeçalhos customizados para passar pelo seu Proxy da AWS
+                    request.headers['X-Sandx-Auth'] = 'Token-De-Acesso-Seguro';
                 });
+
+                player.addEventListener('error', onErrorEvent);
+            } else {
+                alert('Seu navegador não suporta streaming de alta performance.');
             }
         }
 
-        // Auto-load via URL (Ex: site.com/?ch=sports)
-        const urlParams = new URLSearchParams(window.location.search);
-        const startChannel = urlParams.get('ch') || 'br';
-        changeChannel(startChannel);
+        async function loadStream(manifestUri) {
+            if(!manifestUri || manifestUri === 'LINK_DA_SUA_AWS_AQUI' || manifestUri === 'LINK_CCTV_AQUI') {
+                alert("Conecte o Backend da AWS neste botão primeiro!");
+                return;
+            }
+            
+            loader.classList.remove('hidden');
+            try {
+                await player.load(manifestUri);
+                loader.classList.add('hidden');
+                console.log('Stream SANDX conectado com sucesso.');
+            } catch (e) {
+                onError(e);
+            }
+        }
 
+        function onErrorEvent(event) { onError(event.detail); }
+        function onError(error) {
+            console.error('Erro de Rede/DRM:', error.code, error);
+            loader.classList.add('hidden');
+            alert('Falha na comunicação com a CDN. Código: ' + error.code);
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
